@@ -1,4 +1,4 @@
-import { INITAL_STORE } from '../contexts/TaskContext';
+import { INITAL_STORE } from '@contexts/TaskContext';
 
 export const generateID = () => {
   let s4 = () => {

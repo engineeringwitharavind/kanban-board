@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import Header from '../Header';
-import KanbanGrids from '../KanbanGrids/KanbanGrids';
+import Header from '@components/Header';
+import KanbanGrids from '@components/KanbanGrids';
 
 function App() {
   return (

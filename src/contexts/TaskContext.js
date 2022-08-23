@@ -1,6 +1,6 @@
 import React from 'react';
-import { generateID, getFromLocalStorage, saveToLocalStorage } from '../utils';
-import { STORE_KEY } from '../constants';
+import { generateID, getFromLocalStorage, saveToLocalStorage } from '@utils';
+import { STORE_KEY } from '@constants';
 
 export const INITAL_STORE = [
   {

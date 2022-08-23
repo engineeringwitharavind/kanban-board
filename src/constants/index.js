@@ -6,7 +6,7 @@ export const COLORS = {
   danger: 'hsl(333deg, 100%, 50%)',
   muted: 'hsl(210deg, 50%, 20%)',
   text: 'hsl(0deg, 0%, 100%)',
-  hover: 'hsl(240deg, 100%, 50%)',
+  hover: 'hsl(240deg, 100%, 65%)',
   disabled: 'hsl(0deg, 0%, 30%)',
   white: 'hsl(0deg, 100%, 100%)',
   black: 'hsl(0deg, 0%, 0%)',
@@ -14,6 +14,7 @@ export const COLORS = {
   gray300: 'hsl(0deg, 0%, 70%)',
   gray500: 'hsl(0deg, 0%, 50%)',
   gray700: 'hsl(0deg, 0%, 30%)',
+  gray900: 'hsl(0deg, 0%, 10%)',
 };
 
 export const STORE_KEY = 'store';

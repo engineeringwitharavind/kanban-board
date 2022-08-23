@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TasksContext } from '../../contexts/TaskContext';
-import { DialogOverlay, DialogContent } from '@reach/dialog';
-import Button from '../Button';
-import ModalForm from './ModalForm';
 import { XSquare } from 'react-feather';
-import { COLORS } from '../../constants';
+import { DialogOverlay, DialogContent } from '@reach/dialog';
+import { TasksContext } from '@contexts/TaskContext';
+import Button from '@components/Button';
+import { COLORS } from '@constants';
+import ModalForm from './ModalForm';
 import '@reach/dialog/styles.css';
 
 function Modal() {

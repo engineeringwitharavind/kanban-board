@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Plus, Trash } from 'react-feather';
-import { COLORS } from '../../constants';
+import { COLORS } from '@constants';
 
 function Button({
   children,

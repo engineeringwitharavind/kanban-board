@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import Button from '../Button';
-import { generateID } from '../../utils';
+import Button from '@components/Button';
+import { generateID } from '@utils';
 
 function ModalForm({ submittedTaskData }) {
   const titleRef = React.createRef();

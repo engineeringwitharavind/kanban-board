@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TasksContext } from '../../contexts/TaskContext';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import TaskCard from '../TaskCard';
-import { COLORS } from '../../constants';
+import { TasksContext } from '@contexts/TaskContext';
+import TaskCard from '@components/TaskCard';
+import { COLORS } from '@constants';
 
 function KanbanGrids() {
   const { store, setStore } = React.useContext(TasksContext);

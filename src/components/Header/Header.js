@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import Modal from '../Modal';
-import { COLORS } from '../../constants';
-import Button from '../Button';
-import { TasksContext } from '../../contexts/TaskContext';
+import { TasksContext } from '@contexts/TaskContext';
+import Modal from '@components/Modal';
+import Button from '@components/Button';
+import { COLORS } from '@constants';
 
 function Header() {
   const { store, setStore } = React.useContext(TasksContext);
