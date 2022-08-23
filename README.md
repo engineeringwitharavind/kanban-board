@@ -4,7 +4,7 @@
 
 Kanban Board UI with smooth drag and drop animations.
 
-![kanban-board](https://github.com/engineeringwitharavind/kanban-board)
+![kanban-board](https://github.com/engineeringwitharavind/kanban-board/blob/main/public/assets/kanban-board-ui.PNG)
 
 ![react](https://img.shields.io/badge/frontend-react-61dafb?style=flat&logo=React)
 ![styled-components](https://img.shields.io/badge/styling-styled--components-%23DB7093?style=flat&logo=styled-components)
@@ -34,7 +34,7 @@ yarn start
 
 ## ⚡️ &nbsp; Lighthouse Performance
 
-![Lighthouse](https://github.com/engineeringwitharavind/kanban-board)
+![Lighthouse](https://github.com/engineeringwitharavind/kanban-board/blob/main/public/assets/kanban-board-lighthouse.PNG)
 
 ## 🛠 &nbsp; Crafted by
 
