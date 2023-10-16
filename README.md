@@ -1,7 +1,5 @@
 ### Kanban Board
 
-`Track your work and prioritize accordingly`
-
 Kanban Board UI with smooth drag and drop animations.
 
 ![kanban-board](https://github.com/engineeringwitharavind/kanban-board/blob/main/public/assets/kanban-board-ui.PNG)
@@ -36,7 +34,3 @@ yarn start
 
 ![Lighthouse](https://github.com/engineeringwitharavind/kanban-board/blob/main/public/assets/kanban-board-lighthouse.PNG)
 
-## 🛠 &nbsp; Crafted by
-
-[![](https://github.com/aravind-alpha.png?size=50)](https://github.com/engineeringwitharavind)
-[![Linkedin](https://i.stack.imgur.com/gVE0j.png) LinkedIn](https://www.linkedin.com/in/engineeringwitharavind)
