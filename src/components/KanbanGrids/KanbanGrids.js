@@ -1,91 +1,111 @@
 import React from 'react';
 import styled from 'styled-components';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { motion } from 'framer-motion';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { TasksContext } from '@contexts/TaskContext';
+import { SnackbarContext } from '@contexts/SnackbarContext';
 import TaskCard from '@components/TaskCard';
-import { COLORS } from '@constants';
 
 function KanbanGrids() {
   const { store, setStore } = React.useContext(TasksContext);
+  const { showSnackbar } = React.useContext(SnackbarContext);
   const [data, setData] = React.useState(store);
+  const [isDragging, setIsDragging] = React.useState(false);
+
+  React.useEffect(() => {
+    setData(store);
+  }, [store]);
+
+  const showSnackbarMessage = (message) => {
+    showSnackbar(message);
+  };
+
+  const onDragStart = () => {
+    setIsDragging(true);
+    document.body.classList.add('is-dragging');
+  };
 
   const onDragEnd = (result) => {
-    if (!result.destination) return;
+    setIsDragging(false);
+    document.body.classList.remove('is-dragging');
     const { source, destination } = result;
+    if (!destination) return;
 
-    if (source.droppableId !== destination.droppableId) {
-      const sourceColIndex = data.findIndex((e) => e.id === source.droppableId);
-      const destinationColIndex = data.findIndex(
-        (e) => e.id === destination.droppableId
-      );
+    const sourceColIndex = data.findIndex((e) => e.id === source.droppableId);
+    const destColIndex = data.findIndex(
+      (e) => e.id === destination.droppableId
+    );
 
-      const sourceCol = data[sourceColIndex];
-      const destinationCol = data[destinationColIndex];
-
-      const sourceTask = [...sourceCol.tasks];
-      const destinationTask = [...destinationCol.tasks];
-
-      const [removed] = sourceTask.splice(source.index, 1);
-      destinationTask.splice(destination.index, 0, removed);
-
-      data[sourceColIndex].tasks = sourceTask;
-      data[destinationColIndex].tasks = destinationTask;
-
-      setData(data);
-      setStore(data);
+    if (sourceColIndex === -1 || destColIndex === -1) {
+      console.error('Invalid column IDs:', { sourceColIndex, destColIndex });
+      return;
     }
+
+    const sourceCol = data[sourceColIndex];
+    const destCol = data[destColIndex];
+    const sourceTasks = [...sourceCol.tasks];
+    const destTasks =
+      sourceCol.id === destCol.id ? sourceTasks : [...destCol.tasks];
+
+    const [movedTask] = sourceTasks.splice(source.index, 1);
+    destTasks.splice(destination.index, 0, movedTask);
+
+    const newData = [...data];
+    newData[sourceColIndex] = { ...sourceCol, tasks: sourceTasks };
+    newData[destColIndex] = { ...destCol, tasks: destTasks };
+
+    setData(newData);
+    setStore(newData);
+    showSnackbarMessage(`Task "${movedTask.title}" moved to ${destCol.title}`);
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <KanbanGridsWrapper>
-        {data.map((column) => (
+    <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+      <KanbanGridsWrapper isDragging={isDragging}>
+        {data.map((column, colIndex) => (
           <Droppable key={column.id} droppableId={column.id}>
             {(provided, snapshot) => (
               <KanbanColumnWrapper
-                {...provided.droppableProps}
+                as={motion.div}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: colIndex * 0.1 }}
                 ref={provided.innerRef}
+                {...provided.droppableProps}
                 isDraggingOver={snapshot.isDraggingOver}
-                style={{
-                  ...provided.droppableProps.style,
-                  background: snapshot.isDraggingOver
-                    ? `${COLORS.muted}`
-                    : `${COLORS.background}`,
-                }}
+                role='region'
+                aria-label={`${column.title} column`}
               >
-                <ColumnTitle>{column.title}</ColumnTitle>
-                <React.Fragment>
-                  {column.tasks &&
-                    column.tasks.map((task, index) => (
-                      <Draggable
-                        key={task.id}
-                        draggableId={task.id}
-                        index={index}
+                <ColumnTitle>
+                  {column.title} ({column.tasks.length})
+                </ColumnTitle>
+                {column.tasks.map((task, index) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided, snapshot) => (
+                      <DraggableWrapper
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        isDragging={snapshot.isDragging}
+                        style={{
+                          ...provided.draggableProps.style,
+                          transform: snapshot.isDragging
+                            ? `${provided.draggableProps.style?.transform} scale(1.05)`
+                            : provided.draggableProps.style?.transform,
+                        }}
                       >
-                        {(provided, snapshot) => (
-                          <DraggableDiv
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            isDragging={snapshot.isDragging}
-                            style={{
-                              ...provided.draggableProps.style,
-                              background: snapshot.isDragging
-                                ? `${COLORS.decorative}`
-                                : `${COLORS.white}`,
-                            }}
-                          >
-                            <TaskCard
-                              title={task.title}
-                              category={task.category}
-                              description={task.description}
-                            />
-                          </DraggableDiv>
-                        )}
-                      </Draggable>
-                    ))}
-                  {provided.placeholder}
-                </React.Fragment>
+                        <TaskCard
+                          title={task.title}
+                          category={task.category}
+                          description={task.description}
+                          id={task.id}
+                          columnId={column.id}
+                        />
+                      </DraggableWrapper>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
               </KanbanColumnWrapper>
             )}
           </Droppable>
@@ -98,75 +118,67 @@ function KanbanGrids() {
 const KanbanGridsWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 48px;
-  padding: 16px 0;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md);
   width: 100%;
-  @media screen and (min-width: 768px) {
-    display: block;
-    column-count: 2;
-  }
-  @media screen and (min-width: 992px) {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-  }
-  @media screen and (min-width: 1920px) {
-    min-height: 1250px;
-  }
-`;
+  overflow-x: hidden;
 
-const ColumnTitle = styled.h1`
-  font-size: 1rem;
-  line-height: 1.8;
-  color: ${COLORS.white};
+  @media screen and (min-width: 768px) {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg);
+  }
 `;
 
 const KanbanColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  position: relative;
   width: 100%;
-  min-width: 320px;
-  min-height: 470px;
-  text-align: center;
-  border: 2px solid ${COLORS.gray500};
-  border-radius: 4px;
-  overflow: hidden;
+  min-width: 280px;
+  max-width: 320px;
+  min-height: 400px;
+  max-height: calc(100vh - 150px);
+  background: var(--color-surface-frosted);
+  border-radius: 12px;
+  padding: var(--spacing-md);
+  box-shadow: 0 4px 20px var(--color-shadow);
+  border: 1px solid var(--color-border);
   overflow-y: auto;
-  scroll-behavior: smooth;
   scrollbar-width: none;
-  ::-webkit-scrollbar {
-    width: 0;
+  &::-webkit-scrollbar {
+    display: none;
   }
+  ${({ isDraggingOver }) =>
+    isDraggingOver &&
+    `
+    background: var(--color-gray900);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 8px var(--color-accent);
+  `}
+
   @media screen and (min-width: 768px) {
-    min-width: 250px;
-    display: block;
-    margin-bottom: 16px;
-  }
-  @media screen and (min-width: 992px) {
-    min-width: 250px;
-  }
-  @media screen and (min-width: 1920px) {
-    min-height: 1100px;
+    width: 300px;
   }
 `;
 
-const DraggableDiv = styled.div`
-  display: flex;
-  flex-direction: column;
+const ColumnTitle = styled.h2`
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
   text-align: left;
-  gap: 4px;
-  width: 330px;
-  padding: 8px 16px;
-  margin: 8px auto;
-  border-radius: 4px;
-  color: ${COLORS.black};
-  @media screen and (min-width: 992px) {
-    min-width: 240px;
-    width: 90%;
-  }
+`;
+
+const DraggableWrapper = styled.div`
+  margin-bottom: var(--spacing-sm);
+  border-radius: 12px;
+  ${({ isDragging }) =>
+    isDragging &&
+    `
+    opacity: 1 !important;
+    z-index: 1000 !important;
+  `}
 `;
 
 export default KanbanGrids;

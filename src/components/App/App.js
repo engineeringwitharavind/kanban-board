@@ -1,31 +1,31 @@
+import React from 'react';
 import styled from 'styled-components';
+import { TasksProvider } from '@contexts/TaskContext';
+import { SnackbarProvider } from '@contexts/SnackbarContext';
+import GlobalStyles from '@components/App/GlobalStyles';
 import Header from '@components/Header';
 import KanbanGrids from '@components/KanbanGrids';
 
 function App() {
   return (
-    <Wrapper>
-      <Header />
-      <KanbanGrids />
-    </Wrapper>
+    <TasksProvider>
+      <SnackbarProvider>
+        <GlobalStyles />
+        <AppWrapper>
+          <Header />
+          <KanbanGrids />
+        </AppWrapper>
+      </SnackbarProvider>
+    </TasksProvider>
   );
 }
 
-const Wrapper = styled.div`
+const AppWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-  width: 100%;
-  @media screen and (min-width: 768px) {
-    padding: 16px 32px;
-  }
-  @media screen and (min-width: 1920px) {
-    padding: 16px 32px;
-    max-width: 1900px;
-    min-height: 1300px;
-    margin: 0 auto;
-  }
+  gap: var(--spacing-lg);
+  min-height: 100vh;
+  padding: var(--spacing-md);
 `;
 
 export default App;

@@ -1,101 +1,79 @@
 import { createGlobalStyle } from 'styled-components';
-import { COLORS } from '@constants';
+import { COLORS, SPACING, TYPOGRAPHY } from '@constants';
 
-const GlobalStyles = createGlobalStyle`  
+const GlobalStyles = createGlobalStyle`
+  :root {
+    --color-background: ${COLORS.background};
+    --color-surface: ${COLORS.surface};
+    --color-surface-frosted: ${COLORS.surfaceFrosted};
+    --color-text-primary: ${COLORS.textPrimary};
+    --color-text-secondary: ${COLORS.textSecondary};
+    --color-accent: ${COLORS.accent};
+    --color-accent-hover: ${COLORS.accentHover};
+    --color-danger: ${COLORS.danger};
+    --color-success: ${COLORS.success};
+    --color-border: ${COLORS.border};
+    --color-shadow: ${COLORS.shadow};
+    --color-disabled: ${COLORS.disabled};
+    --color-white: ${COLORS.white};
+    --color-gray100: ${COLORS.gray100};
+    --color-gray300: ${COLORS.gray300};
+    --color-gray500: ${COLORS.gray500};
+    --color-gray700: ${COLORS.gray700};
+    --color-gray900: ${COLORS.gray900};
+    --color-gradient-accent: ${COLORS.accent};
+    --spacing-xs: ${SPACING.xs};
+    --spacing-sm: ${SPACING.sm};
+    --spacing-md: ${SPACING.md};
+    --spacing-lg: ${SPACING.lg};
+    --spacing-xl: ${SPACING.xl};
+    --font-family: ${TYPOGRAPHY.fontFamily};
+    --font-size-xs: ${TYPOGRAPHY.fontSize.xs};
+    --font-size-sm: ${TYPOGRAPHY.fontSize.sm};
+    --font-size-md: ${TYPOGRAPHY.fontSize.md};
+    --font-size-lg: ${TYPOGRAPHY.fontSize.lg};
+    --font-size-xl: ${TYPOGRAPHY.fontSize.xl};
+    --font-weight-regular: ${TYPOGRAPHY.fontWeight.regular};
+    --font-weight-medium: ${TYPOGRAPHY.fontWeight.medium};
+    --font-weight-bold: ${TYPOGRAPHY.fontWeight.bold};
+  }
+
   *,
   *::before,
   *::after {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
   }
 
-  :root {
-    --reach-dialog: 1;
-  }
-
-  html,
   body {
-    color: ${COLORS.text};
-    background: ${COLORS.background};
+    background: var(--color-background);
+    color: var(--color-text-primary);
+    font-family: var(--font-family);
+    font-size: var(--font-size-md);
     line-height: 1.5;
-  	text-rendering: optimizeSpeed;
-	  -webkit-font-smoothing: antialiased;
+    contain: content;
+    &.is-dragging {
+      overflow: hidden;
+    }
   }
 
-  html,
-  body,
-  #root {
-    height: 100%;
-    min-width: 300px;
-    font-family: "Gill Sans MT", sans-serif;
-  }
-
-  img,
-  picture,
-  video,
-  canvas,
-  svg {
-    display: block;
-    max-width: 100%;
-  }
-
-  input,
   button,
-  textarea,
-  select {
-    font: inherit;
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
   }
 
-  p,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    overflow-wrap: break-word;
-  }
-
-  h1 {
-    font-size: 1.6rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
-
-  h3 {
-    font-size: 1.4rem;
-  }
-
-  h4 {
-    font-size: 1.3rem;
-  }
-
-  h5 {
-    font-size: 1.2rem;
-  }
-
-  h6 {
-    font-size: 1.1rem;
-  }
-
-  ul,
-  ol {
-    list-style: none;
-  }
-
-  a,
-  a:hover,
-  a:active,
-  a:focus {
-    text-decoration: none;
-    font: inherit;
-  }
-
-  #root {
-    isolation: isolate;
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
   }
 `;
 

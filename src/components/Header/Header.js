@@ -1,53 +1,72 @@
 import React from 'react';
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 import { TasksContext } from '@contexts/TaskContext';
 import Modal from '@components/Modal';
 import Button from '@components/Button';
-import { COLORS } from '@constants';
 
 function Header() {
   const { store, setStore } = React.useContext(TasksContext);
 
   const clearBoard = () => {
-    store
-      .map((column) => column.tasks)
-      .map((task) => task.splice(0, task.length));
-    const updatedStore = [...store];
+    const updatedStore = store.map((column) => ({
+      ...column,
+      tasks: [],
+    }));
     setStore(updatedStore);
   };
 
   return (
-    <HeaderWrapper>
+    <HeaderWrapper
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      role='banner'
+      aria-label='Kanban Board Header'
+    >
       <Title>Kanban Board</Title>
       <ButtonWrapper>
-        <Button icon="Trash" background={COLORS.danger} onClick={clearBoard}>
+        <Button
+          icon='Trash'
+          variant='danger'
+          onClick={clearBoard}
+          aria-label='Reset Kanban Board'
+        >
           Reset Board
         </Button>
+        <Modal />
       </ButtonWrapper>
-      <Modal />
     </HeaderWrapper>
   );
 }
 
-const HeaderWrapper = styled.header`
+const HeaderWrapper = styled(motion.header)`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
+  padding: var(--spacing-md);
+  background: var(--color-surface-frosted);
+  backdrop-filter: blur(5px);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px var(--color-shadow);
+  border: 1px solid var(--color-border);
+
+  @media screen and (min-width: 768px) {
+    padding: var(--spacing-lg);
+  }
 `;
 
 const Title = styled.h1`
-  display: block;
-  font-size: 1.3rem;
-  color: ${COLORS.primary};
-  @media screen and (max-width: 600px) {
-    display: none;
-  }
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
 `;
 
 const ButtonWrapper = styled.div`
-  &:hover {
-    cursor: pointer;
-  }
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
 `;
 
 export default Header;
