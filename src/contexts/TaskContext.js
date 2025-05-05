@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { getFromLocalStorage, saveToLocalStorage } from '@utils';
 import { STORE_KEY } from '@constants';
 
@@ -54,14 +54,28 @@ export const INITIAL_STORE = [
 ];
 
 export const getInitialTasks = () => {
-  const initialTasks = getFromLocalStorage(STORE_KEY);
+  let initialTasks;
+  try {
+    initialTasks = getFromLocalStorage(STORE_KEY);
+  } catch (error) {
+    console.error('Error reading localStorage:', error);
+    return INITIAL_STORE;
+  }
+
+  // Ensure initialTasks is a non-empty array of non-null objects
   if (
     !initialTasks ||
     !Array.isArray(initialTasks) ||
-    initialTasks.length === 0
+    initialTasks.length === 0 ||
+    initialTasks.some((column) => !column || typeof column !== 'object')
   ) {
+    console.warn(
+      'Invalid localStorage data, using INITIAL_STORE:',
+      initialTasks
+    );
     return INITIAL_STORE;
   }
+
   const isValid = initialTasks.every(
     (column) =>
       column.id &&
@@ -71,24 +85,37 @@ export const getInitialTasks = () => {
         (task) => task.id && task.title && task.category && task.description
       )
   );
-  return isValid ? initialTasks : INITIAL_STORE;
+
+  if (!isValid) {
+    console.warn(
+      'LocalStorage data validation failed, using INITIAL_STORE:',
+      initialTasks
+    );
+    return INITIAL_STORE;
+  }
+
+  return initialTasks;
 };
 
 export const TasksContext = React.createContext();
 
 export const TasksProvider = ({ children }) => {
-  const [store, setStoreRaw] = React.useState(getInitialTasks);
-  const [prevStore, setPrevStore] = React.useState(null);
-  const [editTask, setEditTask] = React.useState(null);
+  const [store, setStoreRaw] = useState(getInitialTasks);
+  const [prevStore, setPrevStore] = useState(null);
+  const [editTask, setEditTask] = useState(null);
 
   const openEditModal = (task) => {
     setEditTask(task);
   };
 
-  const contextValue = React.useMemo(() => {
+  const contextValue = useMemo(() => {
     const setStore = (value) => {
       setPrevStore(store);
-      saveToLocalStorage(STORE_KEY, value);
+      try {
+        saveToLocalStorage(STORE_KEY, value);
+      } catch (error) {
+        console.error('Error saving to localStorage:', error);
+      }
       setStoreRaw(value);
     };
 
