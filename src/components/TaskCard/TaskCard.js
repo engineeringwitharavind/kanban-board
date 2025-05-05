@@ -1,8 +1,13 @@
-import React from 'react';
-import styled from 'styled-components';
+import React, { useContext } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import { Edit, Trash } from 'react-feather';
 import { TasksContext } from '@contexts/TaskContext';
+
+const pulse = keyframes`
+  0%, 100% { transform: scale(1.03); }
+  50% { transform: scale(1.05); }
+`;
 
 const categoryColors = {
   Frontend: 'hsl(210, 80%, 60%)',
@@ -11,8 +16,8 @@ const categoryColors = {
   Architecture: 'hsl(40, 70%, 45%)',
 };
 
-function TaskCard({ title, category, description, id, columnId, isDropped }) {
-  const { setStore, openEditModal } = React.useContext(TasksContext);
+function TaskCard({ title, category, description, id, columnId }) {
+  const { setStore, openEditModal } = useContext(TasksContext);
 
   const handleDelete = () => {
     setStore((prevStore) =>
@@ -27,7 +32,7 @@ function TaskCard({ title, category, description, id, columnId, isDropped }) {
   return (
     <CardWrapper
       as={motion.div}
-      initial={isDropped ? {} : { opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.1 }}
       whileHover={{ scale: 1.03 }}
@@ -66,11 +71,14 @@ const CardWrapper = styled.div`
   gap: var(--spacing-sm);
   padding: var(--spacing-md);
   background: var(--color-surface-frosted);
-  border-radius: 12px; /* Consistent with columns */
+  border-radius: 12px;
   border: 1px solid var(--color-border);
   color: var(--color-text-primary);
   transform: translateZ(0);
   will-change: transform;
+  &:hover {
+    animation: ${pulse} 1.5s infinite;
+  }
 `;
 
 const CardHeader = styled.div`

@@ -29,7 +29,16 @@ function KanbanGrids() {
     setIsDragging(false);
     document.body.classList.remove('is-dragging');
     const { source, destination } = result;
-    if (!destination) return;
+
+    if (!destination) {
+      // Card dropped outside a valid column, show feedback
+      const sourceCol = data.find((e) => e.id === source.droppableId);
+      const movedTask = sourceCol.tasks[source.index];
+      showSnackbarMessage(
+        `Task "${movedTask.title}" returned to ${sourceCol.title}`
+      );
+      return; // Let react-beautiful-dnd reset the card position
+    }
 
     const sourceColIndex = data.findIndex((e) => e.id === source.droppableId);
     const destColIndex = data.findIndex(
@@ -89,18 +98,29 @@ function KanbanGrids() {
                         isDragging={snapshot.isDragging}
                         style={{
                           ...provided.draggableProps.style,
-                          transform: snapshot.isDragging
-                            ? `${provided.draggableProps.style?.transform} scale(1.05)`
-                            : provided.draggableProps.style?.transform,
                         }}
                       >
-                        <TaskCard
-                          title={task.title}
-                          category={task.category}
-                          description={task.description}
-                          id={task.id}
-                          columnId={column.id}
-                        />
+                        <MotionCardWrapper
+                          as={motion.div}
+                          animate={
+                            snapshot.isDragging
+                              ? { scale: 1.05, rotate: 2 }
+                              : { scale: 1, rotate: 0 }
+                          }
+                          transition={{
+                            type: 'spring',
+                            stiffness: 300,
+                            damping: 20,
+                          }}
+                        >
+                          <TaskCard
+                            title={task.title}
+                            category={task.category}
+                            description={task.description}
+                            id={task.id}
+                            columnId={column.id}
+                          />
+                        </MotionCardWrapper>
                       </DraggableWrapper>
                     )}
                   </Draggable>
@@ -179,6 +199,10 @@ const DraggableWrapper = styled.div`
     opacity: 1 !important;
     z-index: 1000 !important;
   `}
+`;
+
+const MotionCardWrapper = styled(motion.div)`
+  border-radius: 12px;
 `;
 
 export default KanbanGrids;
