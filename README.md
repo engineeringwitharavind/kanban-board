@@ -52,7 +52,7 @@ yarn start
 
 The app will open at `http://localhost:3000`.
 
-### Future Ideas
+### Further Enhancements (TODO):
 
 - Column Reordering: Enable drag-and-drop for reordering columns
 - Theme Toggle: Add a dark/light mode toggle to experiment with SSR
